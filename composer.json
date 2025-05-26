@@ -1,0 +1,19 @@
+{
+  "name": "lcfdev/linklib",
+  "description": "linker的库文件，用于依赖composer更新",
+  "license": "LGPL-2.1",
+  "type": "library",
+  "require": {
+    "php": ">=8.0",
+    "ext-gd": "*",
+    "ext-curl": "*",
+    "ext-mbstring": "*",
+    "ext-iconv": "*",
+    "ext-redis": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Swap\\": "src/Swap"
+    }
+  }
+}
