@@ -6,13 +6,15 @@
 
 namespace Swap\Core;
 
+use Swap\Utils\FunUtil;
+
 class Error
 {
-    private $logPath;
+    private $logCfg;
 
-    public function init($logPath)
+    public function init($logCfg)
     {
-        $this->logPath = $logPath;
+        $this->logCfg = $logCfg;
     }
 
     public function render($debug)
@@ -51,7 +53,7 @@ class Error
         if ($errContext) {
             $info['错误数组'] = $errContext;
         }
-        $this->logs('errorHandlerOnline', '捕获错误', $info);
+        $this->logs('errorHandlerOnline',  $info);
         $this->error404();
         exit(0);
     }
@@ -69,7 +71,7 @@ class Error
         $info['异常代码'] = $e->getCode();
         $info['异常信息'] = $e->getMessage();
         $info['异常数组'] = $e->getTrace();
-        $this->logs('exceptHandleOnline', '捕获异常', $info);
+        $this->logs('exceptHandleOnline', $info);
         if ($e->getCode() == 404) {
             $this->error404();
         } else {
@@ -91,7 +93,7 @@ class Error
             $info['行数'] = $error['line'];
             $info['类型'] = $error['type'];
             $info['信息'] = $error['message'];
-            $this->logs('shutdownHandlerOnline', '执行错误', $info);
+            $this->logs('shutdownHandlerOnline', $info);
             $this->error500();
             exit(0);
         }
@@ -195,22 +197,9 @@ ERR;
     }
 
 
-    private function logs($file, $message, $content)
+    private function logs($file, $message)
     {
-        $dir = $this->logPath . DIRECTORY_SEPARATOR . date('Ym') . DIRECTORY_SEPARATOR . 'error';
-        if (!is_dir($dir)) {
-            if (!@mkdir($dir, 0777, true)) {
-                exit('日志目录没有创建文件夹权限');
-            }
-        }
-        $fileName = $dir . DIRECTORY_SEPARATOR . $file . '_' . date('d') . '.log';
-
-        $context = json_encode([
-                'log_date' => '[' . date('Y-m-d H:i:s') . '][' . microtime() . ']',
-                'log_info' => $message,
-                'log_content' => $content,
-            ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
-        return file_put_contents($fileName, $context, FILE_APPEND | LOCK_EX);
+        return FunUtil::getInstance()->log($this->logCfg, $file, $message);
     }
 
     private function friendlyErrorType($type)

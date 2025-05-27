@@ -239,8 +239,7 @@ class AppUtil
      */
     public function log($logCfg, $file, $info)
     {
-        $funUtil = new FunUtil();
-        return $funUtil->log($logCfg, $file, $info);
+        return FunUtil::getInstance()->log($logCfg, $file, $info);
     }
 
     /**

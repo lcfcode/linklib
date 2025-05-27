@@ -3,6 +3,7 @@
  * @link https://gitee.com/lcfcode/linklib
  * @link https://github.com/lcfcode/linklib
  */
+
 namespace Swap\Utils;
 
 class StaticUtil
@@ -217,9 +218,8 @@ class StaticUtil
 
     public static function getMicrotime()
     {
-        $micr = microtime();
-        $micrs = explode(' ', $micr);
-        return $micrs[1] . $micrs[0] * 1000000000;
+        $micr = explode(' ', microtime());
+        return $micr[1] . $micr[0] * 1000000000;
     }
 
     /**

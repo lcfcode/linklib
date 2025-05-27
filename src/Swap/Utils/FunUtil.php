@@ -9,6 +9,16 @@ namespace Swap\Utils;
 
 class FunUtil
 {
+    private static ?FunUtil $instance = null;
+
+    public static function getInstance(): FunUtil
+    {
+        if (null === self::$instance) {
+            self::$instance = new FunUtil();
+        }
+        return self::$instance;
+    }
+
     /**
      * @param $pwd
      * @return string
@@ -20,7 +30,7 @@ class FunUtil
     {
         return strtolower(md5(substr(md5($pwd), 0, -3)));
     }
-    
+
     /**
      * @param $pwd
      * @return bool|string
