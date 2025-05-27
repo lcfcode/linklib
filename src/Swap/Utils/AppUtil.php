@@ -56,7 +56,7 @@ class AppUtil
      */
     public function logs($info, $file = null)
     {
-        $file = $file ?: $this->config()['request.log.file'];
+        $file = $file ?: $this->config()['app.log.file'];
         return FunUtil::getInstance()->log($this->config()['logs'], $file, $info);
     }
 
@@ -70,7 +70,7 @@ class AppUtil
      */
     public function catchLog($e, $name = null)
     {
-        $file = $name ? $name : $this->config()['request.log.file'] . '_exception';
+        $file = $name ? $name : $this->config()['app.log.file'] . '_exception';
         $log['异常,信息如下'] = [
             '异常文件' => $e->getFile(),
             '异常行数' => $e->getLine(),

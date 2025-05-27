@@ -107,6 +107,12 @@ class App
         return $this->objects[$class];
     }
 
+    public function logs($info, $file = null)
+    {
+        $file = $file ?: $this->config()['app.log.file'];
+        return $this->getUtils()->logs($info, $file);
+    }
+
     /**
      * @param $config
      * @author LCF
@@ -130,7 +136,7 @@ class App
     {
         if ('cli' === PHP_SAPI) {
             $argv = $_SERVER['argv'];
-            $config['request.log.file'] = 'cmd_run.' . basename($argv[0]);
+            $config['app.log.file'] = 'cmd_run.' . basename($argv[0]);
             return $config;
         }
         $requestUrl = $_SERVER['REQUEST_URI'];
@@ -146,7 +152,7 @@ class App
         $config['request.module'] = $module;
         $config['request.controller'] = $controller;
         $config['request.action'] = $action;
-        $config['request.log.file'] = $module . '_' . $controller . '_' . $action;
+        $config['app.log.file'] = $module . '_' . $controller . '_' . $action;
         return $config;
     }
 
