@@ -128,6 +128,11 @@ class App
      */
     private function route($config)
     {
+        if ('cli' === PHP_SAPI) {
+            $argv = $_SERVER['argv'];
+            $config['request.log.file'] = 'cmd_run.' . basename($argv[0]);
+            return $config;
+        }
         $requestUrl = $_SERVER['REQUEST_URI'];
         $index = strpos($requestUrl, '?');
         $uri = $index > 0 ? substr($requestUrl, 0, $index) : $requestUrl;

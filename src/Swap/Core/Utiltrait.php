@@ -10,7 +10,7 @@ trait Utiltrait
 {
     /**
      * @param string $name
-     * @return \Swap\Utils\AllUtil
+     * @return \Swap\Utils\AppUtil
      * @author LCF
      * @date
      * 获取工具方法
@@ -44,36 +44,6 @@ trait Utiltrait
         return $this->utils()->getConfigValue($configKey, $default);
     }
 
-    public function passwordEncrypt($pwd)
-    {
-        return $this->utils()->passwordEncrypt($pwd);
-    }
-
-    /**
-     * @param $pwd
-     * @return bool|string
-     * @author LCF
-     * @date 2019/8/17 21:02
-     * 哈希密码加密
-     */
-    public function passwordHash($pwd)
-    {
-        return $this->utils()->passwordHash($pwd);
-    }
-
-    /**
-     * @param $pwd
-     * @param $hash
-     * @return bool
-     * @author LCF
-     * @date 2019/8/17 21:01
-     * 哈希密码验证
-     */
-    public function passwordVerify($pwd, $hash)
-    {
-        return $this->utils()->passwordVerify($pwd, $hash);
-    }
-
     /**
      * @param null $time
      * @return false|string
@@ -86,16 +56,6 @@ trait Utiltrait
         return $time ? date('Y-m-d H:i:s', $time) : date('Y-m-d H:i:s');
     }
 
-    /**
-     * @return string
-     * @author LCF
-     * @date 2019/8/17 18:33
-     * 返回uuid
-     */
-    public function uuid()
-    {
-        return $this->utils()->getUuid();
-    }
 
     /**
      * @param $info
