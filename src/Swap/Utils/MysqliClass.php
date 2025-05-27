@@ -53,6 +53,9 @@ class MysqliClass implements DbInterface
 
     public function clientInfo()
     {
+        if (PHP_VERSION > 8.0) {
+            trigger_error('php版本大于8.0，该方法已起用', E_USER_ERROR);
+        }
         return $this->_connect->get_client_info();
     }
 
