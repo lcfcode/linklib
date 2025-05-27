@@ -1,3 +1,4 @@
 **/.idea/**
 **/vendor/**
 composer.lock
+.1.git_pull.bat
