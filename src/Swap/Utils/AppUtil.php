@@ -91,7 +91,7 @@ class AppUtil
     public function getRedis($config = [])
     {
         if (empty($config)) {
-            $config = $this->config()['global.config']['redis'];
+            $config = $this->config()['redis'];
         }
         return $this->app->getUtils('RedisClass')->connect($config);
     }
