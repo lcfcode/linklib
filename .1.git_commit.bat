@@ -14,3 +14,5 @@ git commit -m "bat_commit: %date%%time%"
 git push origin master
 git push gitee master
 ::pause
+
+timeout /t 5 /nobreak
