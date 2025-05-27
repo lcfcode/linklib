@@ -39,10 +39,6 @@ class AppUtil
      */
     public function getConfigValue($configKey, $default = null)
     {
-        $config = $this->app->getModuleConfig();
-        if (isset($config[$configKey])) {
-            return $config[$configKey];
-        }
         $globalConfig = $this->config();
         if ($globalConfig[$configKey]) {
             return $globalConfig[$configKey];

@@ -42,7 +42,7 @@ class Config
         return self::$objects;
     }
 
-    public static function globalConfig($configFile = 'dev.php')
+    public static function getConfig($configFile = 'dev.php')
     {
         $key = 'run.global.config.' . $configFile;
         if (isset(self::$objects[$key])) {

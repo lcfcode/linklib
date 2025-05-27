@@ -11,81 +11,52 @@ use Swap\Utils\FunUtil;
 class Error
 {
     private $logCfg;
+    private $debug;
 
-    public function init($logCfg)
+    public function init($logCfg, $debug)
     {
         $this->logCfg = $logCfg;
+        $this->debug = $debug;
     }
 
-    public function render($debug)
+    public function render()
     {
-        if ($debug === true) {
+        if ($this->debug === true) {
             ini_set('display_errors', 'On');
             error_reporting(E_ALL);
-            set_error_handler([$this, 'errorHandlerDev']);
-            set_exception_handler([$this, 'exceptHandleDev']);
-            register_shutdown_function([$this, 'shutdownHandlerDev']);
         } else {
+            ini_set('display_errors', 'Off');
             error_reporting(0);
-            set_error_handler([$this, 'errorHandlerOnline']);
-            set_exception_handler([$this, 'exceptHandleOnline']);
-            register_shutdown_function([$this, 'shutdownHandlerOnline']);
         }
+        set_error_handler([$this, 'errorHandler']);
+        set_exception_handler([$this, 'exceptHandle']);
+        register_shutdown_function([$this, 'shutdownHandler']);
     }
 
-    /**
-     * @param $errNo
-     * @param $errMsg
-     * @param $errFile
-     * @param $errLine
-     * @param $errContext
-     * @author LCF
-     * @date 2019/8/17 18:09
-     * 处理错误函数
-     */
-    public function errorHandlerOnline($errNo, $errMsg, $errFile, $errLine, $errContext)
+    public function errorHandler($errNo, $errMsg, $file, $line, $errContext)
     {
         $info['错误级别'] = $this->friendlyErrorType($errNo);
-        $info['错误行数'] = $errLine;
-        $info['错误文件'] = $errFile;
+        $info['错误行数'] = $line;
+        $info['错误文件'] = $file;
         $info['错误信息'] = $errMsg;
         $info['错误代码'] = $errNo;
         if ($errContext) {
             $info['错误数组'] = $errContext;
         }
-        $this->logs('errorHandlerOnline',  $info);
-        $this->error404();
-        exit(0);
+        $this->printError($info, '404', 'error_handler');
     }
 
-    /**
-     * @param $e \Exception
-     * @user LCF
-     * @date 2019/6/9 15:33
-     * 处理异常函数
-     */
-    public function exceptHandleOnline($e)
+    public function exceptHandle($e)
     {
         $info['异常行数'] = $e->getLine();
         $info['异常文件'] = $e->getFile();
         $info['异常代码'] = $e->getCode();
         $info['异常信息'] = $e->getMessage();
         $info['异常数组'] = $e->getTrace();
-        $this->logs('exceptHandleOnline', $info);
-        if ($e->getCode() == 404) {
-            $this->error404();
-        } else {
-            $this->error500();
-        }
-        exit(0);
+        $this->printError($info, $e->getCode(), 'except_handle');
     }
 
-    /**
-     * @author LCF
-     * @date 2019/8/17 18:10
-     * php中止时执行的函数
-     */
-    public function shutdownHandlerOnline()
+    public function shutdownHandler()
     {
         $error = error_get_last();
         if ($error) {
@@ -93,114 +64,47 @@ class Error
             $info['行数'] = $error['line'];
             $info['类型'] = $error['type'];
             $info['信息'] = $error['message'];
-            $this->logs('shutdownHandlerOnline', $info);
-            $this->error500();
-            exit(0);
+            $this->printError($info, '500', 'shutdown_handler');
         }
         return;
     }
 
-    public function errorHandlerDev($errNo, $errMsg, $fileName, $line)
+    private function printError($info, $code, $logFile)
     {
-//        ob_end_clean();
-        $str = '<b>捕获错误</b>';
-        $str .= '<br>错误级别 : ' . $this->friendlyErrorType($errNo);
-        $str .= '<br>错误行数 : ' . $line;
-        $str .= '<br>错误文件 : ' . $fileName;
-        $str .= '<br>错误信息 : ' . $errMsg;
-        $str .= '<br>错误代码 : ' . $errNo;
-        echo $str;
-        echo '<hr><b>其他信息</b><pre>';
-//        print_r($vars);
-        echo '</pre>';
-        exit(0);
-    }
-
-    /**
-     * @param $e \Exception
-     * @user LCF
-     * @date 2019/6/9 15:33
-     */
-    public function exceptHandleDev($e)
-    {
-//        ob_end_clean();
-        $str = '<b>捕获异常</b>';
-        $str .= '<br>异常行数 : ' . $e->getLine();
-        $str .= '<br>异常文件 : ' . $e->getFile();
-        $str .= '<br>异常代码 : ' . $e->getCode();
-        $str .= '<br>异常信息 : ' . $e->getMessage();
-        echo $str . '<hr>';
-        echo '<b>抛出异常信息数组：</b><br><br>';
-        print_r($e);
-        echo '<hr><pre>';
-        print_r($e->getTrace());
-        echo '</pre>';
-        exit(0);
-    }
-
-    public function shutdownHandlerDev()
-    {
-        $e = error_get_last();
-        if ($e) {
-//            ob_end_clean();
-            $str = '<hr>';
-            $str .= '<br>级别 : ' . $this->friendlyErrorType($e['type']);
-            $str .= '<br>行数 : ' . $e['line'];
-            $str .= '<br>文件 : ' . $e['file'];
-            $str .= '<br>信息 : ' . $e['message'];
-            $str .= '<br>类型 : ' . $e['type'];
-            echo $str . '<hr>';
-            echo '<pre>';
-            print_r($e);
-            echo '</pre>';
-            exit(0);
+        if ($this->debug === true) {
+            if ('cli' == PHP_SAPI) {
+                print_r($info);
+            } else {
+                echo '<pre>';
+                print_r($info);
+                echo '</pre>';
+            }
+        } else {
+            FunUtil::getInstance()->log($this->logCfg, 'run_' . $logFile, $info);
+            if ('cli' == PHP_SAPI) {
+                print_r($info);
+            } else {
+                $this->html($code);
+                exit(0);
+            }
         }
-        return;
-    }
-
-    /**
-     * @author LCF
-     * @date 2019/8/17 18:11
-     * 404 错误提示页面
-     */
-    public function error404()
-    {
-        ob_end_clean();
-        echo $this->html();
-        return;
-    }
-
-    /**
-     * @author LCF
-     * @date 2019/8/17 18:11
-     * 其他错误提示页面 即500
-     */
-    public function error500()
-    {
-        ob_end_clean();
-        echo $this->html(500);
-        return;
     }
 
     /**
      * @param int $code
-     * @return string
      * @author LCF
      * @date 2020/1/11 17:21
      * 错误提示页面
      */
     private function html($code = 404)
     {
-        return <<<ERR
+        ob_end_clean();
+        $html = <<<ERR
 <!DOCTYPE html><html lang="en" style="font-size: 18px;"><head><meta charset="UTF-8"><title>sorry {$code}</title></head><style> *{font-size: 5rem;margin: 0;padding: 0}</style><body><div style="position: absolute;margin: auto;left: 0;right: 0;top: 0;bottom: 0;width: 42.5rem;height: 20.5rem;text-align: center"><p style="font-size: 4rem">错误</p><br><p>{$code}</p></div></body></html>
 ERR;
+        echo $html;
     }
 
-
-    private function logs($file, $message)
-    {
-        return FunUtil::getInstance()->log($this->logCfg, $file, $message);
-    }
 
     private function friendlyErrorType($type)
     {
