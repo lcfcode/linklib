@@ -33,7 +33,7 @@ class Error
         register_shutdown_function([$this, 'shutdownHandler']);
     }
 
-    public function errorHandler($errNo, $errMsg, $file, $line, $errContext)
+    public function errorHandler($errNo, $errMsg, $file, $line, $errContext = null)
     {
         $info['错误级别'] = $this->friendlyErrorType($errNo);
         $info['错误行数'] = $line;
