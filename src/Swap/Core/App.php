@@ -139,6 +139,22 @@ class App
             $config['app.log.file'] = 'cmd_run.' . basename($argv[0]);
             return $config;
         }
+        if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
+            $json = file_get_contents('php://input');
+            $data = json_decode($json, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid JSON data']);
+                exit;
+            }
+            $_REQUEST = $data;
+            if (strtoupper($_SERVER['REQUEST_METHOD']) == 'POST') {
+                $_POST = $data;
+            }
+            if (strtoupper($_SERVER['REQUEST_METHOD']) == 'GET') {
+                $_GET = $data;
+            }
+        }
         $requestUrl = $_SERVER['REQUEST_URI'];
         $index = strpos($requestUrl, '?');
         $uri = $index > 0 ? substr($requestUrl, 0, $index) : $requestUrl;
