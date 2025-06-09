@@ -147,12 +147,12 @@ class App
                 echo json_encode(['error' => 'Invalid JSON data']);
                 exit;
             }
-            $_REQUEST = $data;
+            $_REQUEST = array_merge($_REQUEST, $data);
             if (strtoupper($_SERVER['REQUEST_METHOD']) == 'POST') {
-                $_POST = $data;
+                $_POST = array_merge($_POST, $data);
             }
             if (strtoupper($_SERVER['REQUEST_METHOD']) == 'GET') {
-                $_GET = $data;
+                $_GET = array_merge($_GET, $data);
             }
         }
         $requestUrl = $_SERVER['REQUEST_URI'];
