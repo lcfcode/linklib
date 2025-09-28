@@ -41,7 +41,7 @@ class StaticUtil
         return $arr;
     }
 
-    private static function getArrFiles(string $src, &$arr, $suffix = null, $exclude = [])
+    public static function getArrFiles(string $src, &$arr, $suffix = null, $exclude = [])
     {
         array_push($exclude, '.', '..');
         $exclude = array_keys(array_flip(array_map('strtolower', $exclude)));
