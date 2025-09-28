@@ -41,11 +41,13 @@ class StaticUtil
         return $arr;
     }
 
-    public static function getArrFiles(string $src, &$arr, $suffix = null)
+    private static function getArrFiles(string $src, &$arr, $suffix = null, $exclude = [])
     {
+        array_push($exclude, '.', '..');
+        $exclude = array_keys(array_flip(array_map('strtolower', $exclude)));
         $dir = opendir($src);
         while (false !== ($file = readdir($dir))) {
-            if ('.' == $file || '..' == $file) {
+            if (in_array(strtolower($file), $exclude)) {
                 continue;
             }
             $newFile = $src . DIRECTORY_SEPARATOR . $file;
@@ -58,7 +60,7 @@ class StaticUtil
             if ($isFile) {
                 $arr[] = $newFile;
             } else if (is_dir($newFile)) {
-                self::getArrFiles($newFile, $arr, $suffix);
+                self::getArrFiles($newFile, $arr, $suffix, $exclude);
             }
         }
         closedir($dir);
