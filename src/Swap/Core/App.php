@@ -136,7 +136,7 @@ class App
     {
         if ('cli' === PHP_SAPI) {
             $argv = $_SERVER['argv'];
-            $config['app.log.file'] = 'cmd_run.' . basename($argv[0]);
+            $config['app.log.file'] = basename($argv[0]);
             return $config;
         }
         if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
