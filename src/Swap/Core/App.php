@@ -55,7 +55,7 @@ class App
     /**
      * @param $config
      * @param string $read
-     * @return mixed
+     * @return DbInterface
      * @author LCF
      * @date 2019/10/26 16:37
      * 返回db类
