@@ -4,7 +4,7 @@ namespace Swap\Utils;
 
 class SnowflakeId
 {
-    private int $epoch = 1731117701; // 起始时间戳
+    private int $epoch = 1731117701000; // 起始时间戳
     private int $dataCenterId; // 数据中心ID
     private int $workerId; // 机器（实例）ID
     private int $sequence; // 序列号
